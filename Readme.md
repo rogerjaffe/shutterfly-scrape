@@ -35,3 +35,5 @@ I created this program to help a friend who had a lot of photos and captions to 
 6. The URL in the browser address bar will end in a number.  This is the photo number of the last photo in the album. Write down this number; this is the `end` number.
 
 I hope this is helpful for you!
+
+###### Posted to `https://www.reddit.com/r/photography/comments/105e6yf/shutterfly_shutting_down_share_sites_service`
