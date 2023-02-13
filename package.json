@@ -1,0 +1,22 @@
+{
+  "name": "shutterfly-scrape",
+  "version": "1.0.0",
+  "description": "Download photos and captions from shared Shutterfly albums",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "Roger Jaffe",
+  "repository": "https://github.com/rogerjaffe/shutterfly-scrape",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "bluebird": "^3.7.2",
+    "https": "^1.0.0",
+    "puppeteer": "^19.6.3"
+  },
+  "devDependencies": {
+    "prettier": "^2.8.4"
+  }
+}

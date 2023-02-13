@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html lang="en-US" xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://shutterfly.com/" xmlns:fb="http://www.facebook.com/2008/fbml">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Shutterfly</title>
+    <script src="//cmd.shutterfly.com/commands/format/js?site=budapestvictimsmemorialoasis&page=budapestvictimsmemorialoasis%2fpictures%2f8&v=1&usejwt_token=true" type="text/javascript"></script>
+    <!-- Load Optimizely -->
+    <script type="text/javascript">
+        (function () {
+            if (window.Shr && window.Shr.AD && Shr.AD.Features && Shr.AD.Features.WebOptimizelyEnabled && window.Shr.A && window.Shr.A.optimizelyJS) {
+                document.write('<script src="' + window.Shr.A.optimizelyJS + '"><\/script>');
+            }
+        })();
+    </script>
+    <!-- Load Adobe DTL Site Feature flag and its related $omnitureDTL object containing helper functions -->
+    <script type="text/javascript">
+        (function () {
+            if (window.Shr && window.Shr.A && window.Shr.A.wwwSSL) {
+                var adobeDTLEnableSrc = window.Shr.A.wwwSSL + 'rest/omnitureDTL/adobeDTM.siteCatalyst.DTL?exposeCustomerId=true';
+                document.write('<script type="text/javascript" src="' + adobeDTLEnableSrc + '"><\/script>');
+            }
+        })();
+    </script>
+    <!-- Setup the SFLY_DTL object and log the page view -->
+    <script type="text/javascript">
+        (function () {
+            if (window.DTLSiteFeatureEnabled && window.Shr && window.Shr.A && window.Shr.A.wwwSSL && window.Shr.adobeDTL) {
+                window.$omnitureDTL.setupOmnitureDTLTracking(Shr.A.wwwSSL, function (options) {
+                    Shr.adobeDTL.trackPageLoad();
+                }, null);
+            }
+        })();
+    </script>
+    <!-- Insert the _satellite library (we do it here because it should happen synchronously) -->
+    <script type="text/javascript">
+        (function () {
+            if (window.SatelliteLibURL) {
+                document.write('<script type="text/javascript" src="' + window.SatelliteLibURL + '"><\/script>');
+            }
+        })();
+    </script>
+    <!-- Load zuul JS (Used for Identity Platform flow) -->
+    <script type="text/javascript">
+        (function () {
+            if (window.Shr && window.Shr.A && window.Shr.A.zuul) {
+                var zuulJSSrc = window.Shr.A.zuul;
+                document.write('<script type="text/javascript" src="' + zuulJSSrc + '"><\/script>');
+            }
+        })();
+    </script>
+</head>
+<body>
+    <script type="text/javascript">
+        var underMaintenance = false;
+        if (!underMaintenance) {
+            if (window.Shr && Shr.Page) {
+                Shr.Page.render();
+            }
+            else {
+                document.write("The JavaScript for this page failed to load correctly.");
+                new Image().src = "commands/clienterror?code=1";
+            }
+        }
+        else {
+            document.write("Server is under maintenance.Please try again in a few minutes.");
+        }
+    </script>
+    <noscript><div class="noscript">This page requires JavaScript to be enabled.  <a href="//www.shutterfly.com/sites/message.sfly?id=js">Help</a></div></noscript>
+</body>
+</html>
