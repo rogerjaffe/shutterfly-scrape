@@ -26,7 +26,13 @@ const processPix = async (albums) => {
           n.getAttribute("alt")
         );
         const [fname, ext] = fspec.split(".");
-        const caption = await page.$eval(".pic-img-text", (n) => n.innerText);
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        let caption = await page.$eval(".pic-img-text", (n) => n.innerText);
+        if (caption.trim().length === 0) {
+          await new Promise((resolve) => setTimeout(resolve, 5000));
+          caption = await page.$eval(".pic-img-text", (n) => n.innerText);
+          console.log("Repeat caption! " + (i + 1));
+        }
         const picIdx = sprintf("%04d", forward ? i - start + 1 : end - i + 1);
         const picFName =
           rootUri + picIdx + "_" + fname + "." + ext.toLowerCase();
