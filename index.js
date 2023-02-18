@@ -1,13 +1,14 @@
 import puppeteer from "puppeteer";
 import Promise from "bluebird";
 import * as fs from "fs";
+import { sprintf } from "sprintf-js";
 import download from "./download.js";
 import ALBUMS from "./ALBUMS.js";
 
 const IMAGE_DIR = "./images/";
 
 const processPix = async (albums) => {
-  return Promise.map(albums, async ({ url, album, start, end }) => {
+  return Promise.map(albums, async ({ url, album, start, end, forward }) => {
     const rootUri = `${IMAGE_DIR}${album}/IMG_`;
     fs.mkdirSync(`${IMAGE_DIR}${album}`, { recursive: true });
     for (let i = start; i <= end; i++) {
@@ -26,8 +27,10 @@ const processPix = async (albums) => {
         );
         const [fname, ext] = fspec.split(".");
         const caption = await page.$eval(".pic-img-text", (n) => n.innerText);
-        const picFName = rootUri + i + "_" + fname + "." + ext.toLowerCase();
-        const captionFName = rootUri + i + "_" + fname + ".txt";
+        const picIdx = sprintf("%04d", forward ? i - start + 1 : end - i + 1);
+        const picFName =
+          rootUri + picIdx + "_" + fname + "." + ext.toLowerCase();
+        const captionFName = rootUri + picIdx + "_" + fname + ".txt";
         await download(picUrl, picFName);
         fs.writeFileSync(captionFName, caption);
         console.log(picFName);
