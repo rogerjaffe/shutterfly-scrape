@@ -1,58 +1,45 @@
-import puppeteer from "puppeteer";
 import Promise from "bluebird";
 import * as fs from "fs";
 import { sprintf } from "sprintf-js";
 import download from "./download.js";
-import ALBUMS from "./ALBUMS.js";
+import ALBUMS from "./ALBUMS-AJ2.js";
+import wget from "node-wget";
 
-const IMAGE_DIR = "./images/";
+const SF_URL_PREFIX = "https://uniim-share.shutterfly.com/v2/procgtaserv/";
+const OUT_DIR = "./albums/";
 
-const processPix = async (albums) => {
-  return Promise.map(albums, async ({ url, album, start, end, forward }) => {
-    const rootUri = `${IMAGE_DIR}${album}/IMG_`;
-    fs.mkdirSync(`${IMAGE_DIR}${album}`, { recursive: true });
-    for (let i = start; i <= end; i++) {
-      const picFrameUrl = `${url}${i}`;
-      const browser = await puppeteer.launch();
-      try {
-        const page = await browser.newPage();
-        await page.goto(picFrameUrl);
-        console.log(picFrameUrl);
-        const src = await page.$eval(".detail-img", (n) =>
-          n.getAttribute("src")
-        );
-        const picUrl = src.indexOf("https://") === -1 ? "https:" + src : src;
-        const fspec = await page.$eval(".detail-img", (n) =>
-          n.getAttribute("alt")
-        );
-        const [fname, ext] = fspec.split(".");
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        let caption = await page.$eval(".pic-img-text", (n) => n.innerText);
-        if (caption.trim().length === 0) {
-          await new Promise((resolve) => setTimeout(resolve, 5000));
-          caption = await page.$eval(".pic-img-text", (n) => n.innerText);
-          console.log("Repeat caption! " + (i + 1));
-        }
-        const picIdx = sprintf("%04d", forward ? i - start + 1 : end - i + 1);
-        const picFName =
-          rootUri + picIdx + "_" + fname + "." + ext.toLowerCase();
-        const captionFName = rootUri + picIdx + "_" + fname + ".txt";
-        await download(picUrl, picFName);
-        fs.writeFileSync(captionFName, caption);
-        console.log(picFName);
-        console.log(captionFName);
-      } catch (err) {
-        console.log(err);
-        console.log("Err: " + i);
-      } finally {
-        await browser.close();
-      }
-    }
-    return true;
-  });
+const processPix = async ({ jsonFile, album, folder }) => {
+  console.log(jsonFile, album, folder);
+  const dataJSON = fs.readFileSync(jsonFile, { encoding: "utf8" });
+  const data = JSON.parse(dataJSON);
+  const outDir = `${OUT_DIR}${folder}`;
+  fs.mkdirSync(outDir, { recursive: true });
+  const items = data.result.section.items;
+  const itemData = await Promise.all(
+    items.map(async (item, idx) => {
+      const { captureDate, text, title, shutterflyId: uri } = item;
+      const url = SF_URL_PREFIX + uri;
+      const [fname, ext] = title.split(".");
+      const fName = `${outDir}/${(idx + 1 + "").padStart(4, "0")}.`;
+      const imageFName = fName + ext;
+      const textFName = fName + "txt";
+      await new Promise((resolve, reject) => {
+        const dest = imageFName;
+        wget({ url, dest }, function (error, response) {
+          if (error) {
+            console.log("An error happened, whyyyy!", error);
+            reject(error);
+          }
+          resolve(response);
+        });
+      });
+      fs.writeFileSync(textFName, text);
+      return { text, title, captureDate };
+    })
+  );
+  console.log(itemData);
 };
 
-processPix(ALBUMS).then((results) => {
-  console.log(results);
-  process.exit(0);
+ALBUMS.albums.forEach((album) => {
+  processPix(album);
 });
