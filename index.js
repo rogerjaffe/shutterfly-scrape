@@ -9,6 +9,15 @@ import JSON5 from "json5";
 const SF_URL_PREFIX = "https://uniim-share.shutterfly.com/v2/procgtaserv/";
 const OUT_DIR = "./albums/";
 
+const mimeTypes = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/gif": "gif",
+  "image/bmp": "bmp",
+  "image/tiff": "tiff",
+  "image/webp": "webp",
+};
+
 const createIndexHtml = (imageFName, text, idx, date, title) => {
   return `
     <div class="photo">
@@ -64,12 +73,12 @@ const processPix = async (data, name, folder) => {
       const { captureDate, text = "", title = "", shutterflyId: uri } = item;
       console.log(`${folder} => Retrieving item ${idx + 1}`);
       const url = SF_URL_PREFIX + uri;
-      const [fname, ext] = title.split(".");
-      const imageFSpec = `p${(idx + 1 + "").padStart(4, "0")}.${ext}`;
-      const fName = `${outDir}/p${(idx + 1 + "").padStart(4, "0")}.`;
-      const imageFName = fName + ext;
-      const textFName = fName + "txt";
-      await new Promise((resolve, reject) => {
+      const [fname, _ext] = title.split(".");
+      const imageFSpec = `p${(idx + 1 + "").padStart(4, "0")}`;
+      const fName = `${outDir}/p${(idx + 1 + "").padStart(4, "0")}`;
+      const imageFName = fName; /* + ext*/
+      const textFName = fName + ".txt";
+      const res = await new Promise((resolve, reject) => {
         const dest = imageFName;
         wget({ url, dest }, function (error, response) {
           if (error) {
@@ -79,8 +88,16 @@ const processPix = async (data, name, folder) => {
           resolve(response);
         });
       });
+      const ext = mimeTypes[res.headers["content-type"]] ?? "jpg";
+      fs.renameSync(imageFName, imageFName + "." + ext);
       fs.writeFileSync(textFName, text);
-      const html = createIndexHtml(imageFSpec, text, idx, captureDate, title);
+      const html = createIndexHtml(
+        imageFSpec + "." + ext,
+        text,
+        idx,
+        captureDate,
+        title
+      );
       return { text, title, captureDate, html };
     },
     { concurrency: 5 }
