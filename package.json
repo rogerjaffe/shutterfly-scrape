@@ -1,6 +1,6 @@
 {
   "name": "shutterfly-scrape",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Download photos and captions from shared Shutterfly albums prior to the closing of the shared service on Mar 23, 2023",
   "main": "index.js",
   "type": "module",
